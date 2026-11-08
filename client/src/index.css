@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============ 设计系统基础 ============ */
+
+@layer base {
+  html {
+    @apply bg-ink text-paper font-body antialiased;
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    @apply bg-accent text-ink;
+  }
+
+  /* 深色滚动条，贴合整体气质 */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-ink;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-carbon border-2 border-ink;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent;
+  }
+}
+
+@layer components {
+  /* 异形切角主按钮：实心电光橙 */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-accent px-6 py-3
+           font-display text-sm font-bold uppercase tracking-wider text-ink
+           transition-all duration-200 hover:bg-volt hover:shadow-[0_0_24px_rgba(198,255,0,0.35)]
+           disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent disabled:hover:shadow-none;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  /* 描边发光次按钮 */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 border border-smoke px-6 py-3
+           font-display text-sm font-bold uppercase tracking-wider text-paper
+           transition-all duration-200 hover:border-accent hover:text-accent
+           hover:shadow-[0_0_20px_rgba(255,77,0,0.25)] disabled:cursor-not-allowed disabled:opacity-40;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  /* 切角卡片容器 */
+  .card-cut {
+    @apply relative border border-carbon bg-ink transition-all duration-200;
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  }
+  .card-cut:hover {
+    @apply -translate-y-1 border-accent shadow-[8px_8px_0_0_rgba(255,77,0,0.9)];
+  }
+
+  /* 分类色块标签（颜色由内联 style 注入） */
+  .chip {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 font-display text-xs font-bold
+           uppercase tracking-wide text-ink;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  /* 表单输入框 */
+  .field {
+    @apply w-full border border-carbon bg-transparent px-4 py-3 text-paper placeholder:text-smoke
+           outline-none transition-colors duration-200 focus:border-accent;
+  }
+
+  /* 大标题 glitch 微动效：hover 时橙绿双影错位 */
+  .glitch {
+    @apply transition-[text-shadow] duration-150;
+  }
+  .glitch:hover {
+    text-shadow: 3px 0 0 #ff4d00, -3px 0 0 #c6ff00;
+  }
+}
+
+@layer utilities {
+  /* 网格背景：首页 Hero 使用 */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(247, 245, 240, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(247, 245, 240, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* 噪点纹理：叠加在 Hero 上增加印刷质感 */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  }
+
+  .text-stroke {
+    -webkit-text-stroke: 1px #f7f5f0;
+    color: transparent;
+  }
+}
+
+/* ============ Markdown 正文定制（配合 @tailwindcss/typography） ============ */
+/* 仅覆盖 prose 无法用修饰类优雅表达的少量全局规则 */
+.prose-lumen {
+  @apply prose prose-invert max-w-none prose-p:leading-[1.7]
+    prose-headings:font-display prose-headings:tracking-tight
+    prose-a:text-accent prose-a:no-underline hover:prose-a:text-volt
+    prose-strong:text-volt
+    prose-img:rounded-lg prose-img:shadow-[0_8px_32px_rgba(0,0,0,0.5)];
+}
+
+/* 荧光行内代码 */
+.prose-lumen :not(pre) > code {
+  @apply bg-volt/15 px-1.5 py-0.5 font-mono text-[0.85em] font-semibold text-volt;
+}
+
+/* 深色宽代码块 */
+.prose-lumen pre {
+  @apply border border-carbon bg-carbon/40 font-mono;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+
+/* 大引用块：4px 橙色左边线 + 反色纸白底 */
+.prose-lumen blockquote {
+  @apply border-l-4 border-accent bg-paper px-6 py-4 not-italic text-ink;
+}
+.prose-lumen blockquote p {
+  @apply text-ink;
+}
+
+/* ============ 尊重 prefers-reduced-motion ============ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
