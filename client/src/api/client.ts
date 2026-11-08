@@ -12,8 +12,12 @@ export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
-/** axios 实例：baseURL 走 Vite 代理，拦截器自动携带 / 处理 JWT */
-export const api = axios.create({ baseURL: '/api', timeout: 10000 });
+/**
+ * axios 实例：开发期走 Vite 代理（/api），生产通过 VITE_API_BASE_URL 指向线上后端
+ * 例：VITE_API_BASE_URL=https://lumen-api.onrender.com/api
+ */
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() || '/api';
+export const api = axios.create({ baseURL: API_BASE, timeout: 10000 });
 
 // 请求拦截：自动注入 Authorization
 api.interceptors.request.use((config) => {

@@ -4,6 +4,7 @@ import postRoutes from './routes/posts';
 import categoryRoutes from './routes/categories';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler';
 import { ok } from './utils/response';
+import { env } from './config/env';
 
 /**
  * Express 应用装配。
@@ -16,9 +17,16 @@ export function createApp(): express.Express {
   // JSON 解析（限制体积，防大包攻击）
   app.use(express.json({ limit: '1mb' }));
 
-  // 开发环境简易 CORS：生产建议由反向代理同源部署或收紧 origin
+  // CORS：本地默认不限制；生产通过 CORS_ORIGIN 指定前端域名（逗号分隔可配多个）
+  const allowList = env.corsOrigin === '*' ? null : env.corsOrigin.split(',').map((s) => s.trim());
   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin ?? '*');
+    const origin = req.headers.origin;
+    if (!allowList) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    } else if (origin && allowList.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     if (req.method === 'OPTIONS') {

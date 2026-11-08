@@ -30,12 +30,16 @@ if (!['mysql', 'sqlite', 'mssql'].includes(driver)) {
 export const env = {
   port: parseInt(optional('PORT', '3001'), 10),
   dbDriver: driver as 'mysql' | 'sqlite' | 'mssql',
+  /** 允许跨域的前端来源，多个用逗号分隔；* 表示不限制（仅本地联调用） */
+  corsOrigin: optional('CORS_ORIGIN', '*'),
   db: {
     host: optional('DB_HOST', '127.0.0.1'),
     port: parseInt(optional('DB_PORT', '3306'), 10),
     user: driver === 'mysql' ? required('DB_USER') : optional('DB_USER', ''),
     password: driver === 'mysql' ? required('DB_PASSWORD') : optional('DB_PASSWORD', ''),
     database: optional('DB_NAME', 'lumen'),
+    /** 云端 MySQL（Aiven / TiDB Cloud 等）通常强制 TLS，本地默认关闭 */
+    ssl: optional('DB_SSL', 'false') === 'true',
   },
   sqliteFile: optional('SQLITE_FILE', './data/lumen.sqlite'),
   mssql: {

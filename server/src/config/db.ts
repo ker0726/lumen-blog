@@ -33,6 +33,8 @@ function createMysqlAdapter(): DbAdapter {
     charset: 'utf8mb4',
     // DATE/DATETIME 以字符串返回，避免时区隐式转换带来的序列化问题
     dateStrings: true,
+    // 云端 MySQL 强制 TLS；自签/托管 CA 场景下不做严格校验
+    ssl: env.db.ssl ? { rejectUnauthorized: false } : undefined,
   });
   return {
     async query<T>(sql: string, params: unknown[] = []): Promise<[T, null]> {
